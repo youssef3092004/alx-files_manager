@@ -10,19 +10,17 @@ const url = `mongodb://${DB_HOST}:${DB_PORT}`;
  */
 class DBClient {
   constructor() {
-    this.client = new MongoClient(url, { useUnifiedTopology: true });
-
-    // Connect to MongoDB and set up the collections
-    this.client
-      .connect()
-      .then(() => {
-        this.db = this.client.db(DB_DATABASE);
-        this.userCollection = this.db.collection("user");
-        this.fileCollection = this.db.collection("files");
-      })
-      .catch((error) => {
-        console.log(`Error connecting to MongoDB: ${error.message}`);
-      });
+    MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
+      if (!err) {
+        // console.log('Connected successfully to server');
+        this.db = client.db(DB_DATABASE);
+        this.usersCollection = this.db.collection('users');
+        this.filesCollection = this.db.collection('files');
+      } else {
+        console.log(err.message);
+        this.db = false;
+      }
+    });
   }
 
   /**
