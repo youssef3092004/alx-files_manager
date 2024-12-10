@@ -1,11 +1,14 @@
+import { MongoClient } from 'mongodb';
+
+const DB_HOST = process.env.DB_HOST || 'localhost';
+const DB_PORT = process.env.DB_PORT || 27017;
+const DB_DATABASE = process.env.DB_DATABASE || 'files_manager';
+const url = `mongodb://${DB_HOST}:${DB_PORT}`;
+
 /**
- * Class for interacting with MongoDB for files and users data
+ * Class for performing operations with Mongo service
  */
 class DBClient {
-  /**
-   * Initializes the connection to MongoDB using provided host, port, and database details.
-   * It connects to the database and sets up the collections for users and files.
-   */
   constructor() {
     this.client = new MongoClient(url, { useUnifiedTopology: true });
 
@@ -23,32 +26,32 @@ class DBClient {
   }
 
   /**
-   * Checks if the MongoDB connection is alive.
-   * @return {boolean} true if the connection to MongoDB is successful, false otherwise
+   * Checks if connection to Redis is Alive
+   * @return {boolean} true if connection alive or false if not
    */
   isAlive() {
-    if (this.db) {
-      return true;
-    } else {
-      return false;
-    }
+    return Boolean(this.db);
   }
 
   /**
-   * Asynchronously retrieves the number of documents in the "user" collection.
-   * @return {number} the number of users in the database
+   * Returns the number of documents in the collection users
+   * @return {number} amount of users
    */
   async nbUsers() {
-    const numberOfUsers = await this.userCollection.countDocuments(); // Returns the number of documents in the user collection
+    const numberOfUsers = this.usersCollection.countDocuments();
     return numberOfUsers;
   }
 
   /**
-   * Asynchronously retrieves the number of documents in the "files" collection.
-   * @return {number} the number of files in the database
+   * Returns the number of documents in the collection files
+   * @return {number} amount of files
    */
   async nbFiles() {
-    const numberOfFiles = await this.fileCollection.countDocuments(); // Returns the number of documents in the files collection
+    const numberOfFiles = this.filesCollection.countDocuments();
     return numberOfFiles;
   }
 }
+
+const dbClient = new DBClient();
+
+export default dbClient;
